@@ -90,13 +90,13 @@ set runtimepath+=~/.vim/plugged/deoplete-jedi/
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete = 1
-let g:python_host_prog = '~/miniconda3/envs/neovim2/bin/python2.7'
-let g:python3_host_prog = '~/miniconda3/envs/neovim/bin/python3.7'
+let g:python_host_prog = expand('~/miniconda3/envs/neovim2/bin/python2.7')
+let g:python3_host_prog = expand('~/miniconda3/envs/neovim/bin/python3.7')
 
 " Language Server
 set hidden
 let g:LanguageClient_loggingLevel = 'DEBUG'
-let g:LanguageClient_loggingFile = '~/Desktop/log.txt'
+let g:LanguageClient_loggingFile = expand('~/Desktop/log.txt')
 let g:LanguageClient_serverCommands = {
     \ 'cs': ['/opt/omnisharp-roslyn/OmniSharp.exe', '-lsp', '-e', 'utf-8'],
     \ 'css': ['/home/kmccool/.npm/bin/css-languageserver', '-stdio'],
