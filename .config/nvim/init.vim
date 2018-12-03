@@ -1,1 +1,1 @@
-/home/kmccool/.vimrc
+/Users/kmccool/.vimrc
