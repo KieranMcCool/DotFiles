@@ -5,6 +5,8 @@ set nocompatible
 
 call plug#begin('~/.vim/plugged')
 
+  Plug 'HerringtonDarkholme/yats.vim'
+
 " Deoplete
 " ========
 if has('nvim')
@@ -29,6 +31,8 @@ Plug 'autozimu/LanguageClient-neovim', {
             \'do': 'bash install.sh'
             \}
 
+Plug 'Shougo/denite.nvim'
+
 " NerdTree
 " ========
 Plug 'scrooloose/nerdtree'
@@ -42,6 +46,9 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
 
 " CTRL P
 Plug 'ctrlpvim/ctrlp.vim'
+
+" SuperTab
+Plug 'ervandew/supertab'
 call plug#end()
 
 " Additional Config
@@ -91,16 +98,16 @@ set runtimepath+=~/.vim/plugged/deoplete-jedi/
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete = 1
 let g:python_host_prog = expand('~/miniconda3/envs/neo2/bin/python2.7')
-let g:python3_host_prog = expand('~/miniconda3/envs/neo3/bin/python3.7')
+let g:python3_host_prog = expand('~/miniconda3/envs/neo3/bin/python3.6')
 
 " Language Server
 set hidden
 let g:LanguageClient_loggingLevel = 'DEBUG'
 let g:LanguageClient_loggingFile = expand('~/Desktop/log.txt')
 let g:LanguageClient_serverCommands = {
-    \ 'cs': ['/opt/omnisharp-roslyn/OmniSharp.exe', '-lsp', '-e', 'utf-8'],
-    \ 'css': ['/home/kmccool/.npm/bin/css-languageserver', '-stdio'],
-    \ 'typescript': ['/home/kmccool/.npm/bin/typescript-language-server', '-stdio'],
+    \ 'cs': ['mono /opt/omnisharp-roslyn/OmniSharp.exe', '-lsp', '-e', 'utf-8'],
+    \ 'css': [expand('~/.npm/bin/css-languageserver'), '--stdio'],
+    \ 'typescript': [expand('~/.npm/bin/typescript-language-server'), '--stdio'],
     \ 'cpp': ['clangd'],
     \ 'c': ['clangd']
     \ }
@@ -146,3 +153,6 @@ let g:NERDTreeIndicatorMapCustom = {
 
 " Ctrl P set up
 set runtimepath^=~/.vim/plugged/ctrlp.vim
+
+" SuperTab
+let g:SuperTabDefaultCompletionType = "<c-n>"
