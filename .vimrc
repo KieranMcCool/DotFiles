@@ -68,7 +68,6 @@ set smarttab
 set shiftwidth=4
 
 set showcmd
-set cursorline
 set number
 
 set laststatus=2
