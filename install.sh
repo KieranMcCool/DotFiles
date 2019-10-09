@@ -35,7 +35,7 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 sudo pacman -S --noconfirm git neovim yay pandoc pandoc-citeproc texlive-core caprine kdeplasma-addons npm dotnet-sdk dotnet-runtime lutris latte-dock redshift
-yay -S --noconfirm spotify visual-studio-code-bin google-chrome gtk3-nocsd-git sierrabreeze-kwin-decoration-git nerd-fonts-hack
+yay -S --noconfirm spotify visual-studio-code-bin google-chrome gtk3-nocsd-git sierrabreeze-kwin-decoration-git nerd-fonts-hack discord
 
 mkdir ~/Documents/Code
 mkdir ~/Documents/Notes
