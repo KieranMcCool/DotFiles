@@ -18,3 +18,11 @@ alias hrs='cat log.md | grep -e "##" | sed -E "s|##(.)* - ||g" | sed -E "s| (.)*
 alias proj='cd ~/Documents/Notes/Level4Project-Docs && workon pytorch'
 alias vim='nvim'
 alias kaexe='killall -r .*.exe'
+
+function gh {
+    git clone "https://github.com/$1/$2"
+}
+
+function ghme {
+    gh "$GITHUB_USERNAME" "$1"
+}
