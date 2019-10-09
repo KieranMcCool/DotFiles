@@ -5,33 +5,12 @@ set nocompatible
 
 call plug#begin('~/.vim/plugged')
 
-  Plug 'HerringtonDarkholme/yats.vim'
 
-" Deoplete
-" ========
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-
-" Deoplete Completion Sources
-" ===========================
-Plug 'zchee/deoplete-jedi'
-Plug 'wokalski/autocomplete-flow'
-Plug 'zchee/deoplete-clang'
-Plug 'tpope/vim-surround'
 Plug 'alvan/vim-closetag'
 
-" Language Server
-Plug 'autozimu/LanguageClient-neovim', { 
-            \'branch' : 'next',
-            \'do': 'bash install.sh'
-            \}
-
-Plug 'Shougo/denite.nvim'
+" COC Completion
+" ==============
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " NerdTree
 " ========
@@ -85,37 +64,6 @@ endif
 
 " Plugin Specific
 " ===============
-
-" DeoComplete Stuffs
-
-call deoplete#custom#source('LanguageClient',
-            \ 'min_pattern_length',
-            \ 2)
-set runtimepath+=~/.vim/plugged/deoplete.nvim/
-set runtimepath+=~/.vim/plugged/deoplete-jedi/
-
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#auto_complete = 1
-let g:python_host_prog = expand('~/miniconda3/envs/neo2/bin/python2.7')
-let g:python3_host_prog = expand('~/miniconda3/envs/neo3/bin/python3.6')
-
-" Language Server
-set hidden
-let g:LanguageClient_loggingLevel = 'DEBUG'
-let g:LanguageClient_loggingFile = expand('~/Desktop/log.txt')
-let g:LanguageClient_serverCommands = {
-    \ 'cs': ['mono /opt/omnisharp-roslyn/OmniSharp.exe', '-lsp', '-e', 'utf-8'],
-    \ 'css': [expand('~/.npm/bin/css-languageserver'), '--stdio'],
-    \ 'typescript': [expand('~/.npm/bin/typescript-language-server'), '--stdio'],
-    \ 'cpp': ['clangd'],
-    \ 'c': ['clangd']
-    \ }
-
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-" Or map each action separately
-nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 " Closetag setup
 
