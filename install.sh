@@ -8,13 +8,15 @@
 
 dir=$(pwd)                   # dotfiles directory
 olddir=$(pwd)/backup # old dotfiles backup directory
-files=$(find . -not -path "./backup" -not -path "./.git*" -not -name ".gitignore" \
+files=$(find . -not -path "./backup" -not -path "./scripts*" -not -path "./.git*" -not -name ".gitignore" \
     -not -name ".git*" -not -name "install.sh" -type f -exec basename {} \; | xargs echo)
 
 ##########
 
 # create dotfiles_old in homedir
 mkdir -p "$olddir"
+
+ln -s $(pwd)/scripts $HOME/.scripts
 
 # change to the dotfiles directory
 cd $dir

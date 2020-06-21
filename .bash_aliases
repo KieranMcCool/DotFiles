@@ -13,6 +13,10 @@ alias deactivate='conda deactivate'
 alias vim='nvim'
 alias kaexe='killall -r .*.exe'
 alias update="sudo pacman -Syu && yay -Syu"
+alias ngs='ng serve -o'
+alias grep="grep --color=auto"
+alias fgrep="fgrep --color=auto"
+alias egrep="egrep --color=auto"
 
 function gh {
     git clone "https://github.com/$1/$2"
