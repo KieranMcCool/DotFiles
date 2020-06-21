@@ -17,7 +17,7 @@ export GITHUB_USERNAME="KieranMcCool"
 # Path
 export MinicondaPath='/home/kmccool/miniconda3/bin'
 export MSBuildSDKsPath=$( echo /usr/share/dotnet/sdk/3.*/Sdks );
-export CustomScriptsPath='/home/kmccool/.scripts'
+export CustomScriptsPath='/home/kmccool/.scripts:/home/kmccool/.scripts/private'
 export NpmPath='/home/kmccool/.npm/bin'
 export PATH=$PATH:$MinicondaPath:$MSBuildSDKsPath:$CustomScriptsPath:$NpmPath
 
