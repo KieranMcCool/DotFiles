@@ -52,4 +52,5 @@ Write-Output "Starting Docker container with shared and instance-specific volume
 docker run -it --rm `
     -v "${sharedPath}:/workspace/shared" `
     -v "${instancePath}:/workspace/instance" `
+    -P `
     $imageName bash
