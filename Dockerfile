@@ -11,4 +11,5 @@ WORKDIR /etc/DotFiles
 RUN chmod +x ./install.sh
 RUN ./install.sh
 
-CMD /bin/bash
+RUN mkdir /workspace
+WORKDIR /workspace
