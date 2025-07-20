@@ -1,0 +1,57 @@
+FROM alpine:latest
+
+# INSTALL NEOVIM, GIT, NODEJS, NPM, AND BASH (removing .NET for now)
+RUN apk add --no-cache neovim git curl nodejs npm icu-libs bash dcron
+
+# Set npm global prefix for root and add to PATH
+ENV NPM_CONFIG_PREFIX=/root/.npm-global
+ENV PATH="/root/.npm-global/bin:/usr/local/bin:$PATH"
+
+# COPY CONFIGURATION FILES
+COPY . /root/.config/nvim/
+
+# Create a user for testing
+RUN adduser -D -s /bin/bash testuser
+WORKDIR /home/testuser
+
+# Copy dotfiles repo into container (as root)
+COPY . /home/testuser/dotfiles
+WORKDIR /home/testuser/dotfiles
+
+# Make install.sh executable (as root)
+RUN chmod +x install.sh
+
+# Change ownership to testuser
+RUN chown -R testuser:testuser /home/testuser
+
+# Set up cron permissions and directories (must be done as root)
+RUN chmod u+s /usr/bin/crontab && \
+    mkdir -p /var/spool/cron/crontabs && \
+    chmod 755 /var/spool/cron/crontabs && \
+    touch /var/log/cron.log && \
+    chmod 644 /var/log/cron.log
+
+# Switch to testuser
+USER testuser
+WORKDIR /home/testuser/dotfiles
+
+# Run install script (but skip cron for now)
+RUN sed 's/crontab.*cronfile/# &/' install.sh > install_no_cron.sh && \
+    chmod +x install_no_cron.sh && \
+    ./install_no_cron.sh install
+
+# Switch back to root to set up cron
+USER root
+RUN crontab -u testuser /home/testuser/dotfiles/cron/cronfile
+
+# Switch back to testuser  
+USER testuser
+WORKDIR /home/testuser/dotfiles
+
+# Verify cron setup worked
+RUN crontab -l || echo "No crontab found"
+
+RUN nvim --headless "+Lazy! sync" +qa
+
+# Start bash by default
+CMD ["bash"]

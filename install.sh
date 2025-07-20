@@ -21,6 +21,7 @@ do_symlinks() {
     mkdir -p "$HOME/.config"  # Ensure .config exists
     ln -sf "$PWD/nvim" "$HOME/.config/nvim"
     ln -sf "$PWD/cron/cronfile" "$HOME/.cronfile"
+    crontab "$PWD/cron/cronfile"
     ln -sf "$PWD/tmux/tmux.conf" "$HOME/.tmux.conf"
     mkdir -p "$HOME/bin"
     for f in "$PWD/bin"/*; do

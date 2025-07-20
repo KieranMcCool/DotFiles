@@ -23,4 +23,6 @@ npm config set prefix ~/.npm
 
 [[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
 
-eval "$(pandoc --bash-completion)"
+if command -v pandoc &> /dev/null; then
+    eval "$(pandoc --bash-completion)"
+fi
