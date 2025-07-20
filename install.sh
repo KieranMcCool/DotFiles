@@ -1,39 +1,75 @@
-#!/bin/bash
-############################
-# Credit to : https://github.com/mplacona/dotfiles/blob/master/bootstrap.sh for this script. 
-# This script creates symlinks from the home directory to any desired dotfiles in ~/dotfiles
-############################
+#!/usr/bin/env bash
 
-########## Variables
+set -e
 
-dir=$(pwd)                   # dotfiles directory
-olddir=$(pwd)/backup # old dotfiles backup directory
-files=$(find . -not -path "./backup" -not -path "./scripts*" -not -path "./.git*" -not -name ".gitignore" \
-    -not -name ".git*" -not -name "install.sh" -type f -exec basename {} \; | xargs echo)
+# Detect distro
+get_distro() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        echo "$ID"
+    else
+        echo "unknown"
+    fi
+}
 
-##########
+# Symlink function
+do_symlinks() {
+    echo "Symlinking config files..."
+    ln -sf "$PWD/bash/bashrc" "$HOME/.bashrc"
+    ln -sf "$PWD/bash/bash_aliases" "$HOME/.bash_aliases"
+    ln -sf "$PWD/zsh/zshrc" "$HOME/.zshrc"
+    mkdir -p "$HOME/.config"  # Ensure .config exists
+    ln -sf "$PWD/nvim" "$HOME/.config/nvim"
+    ln -sf "$PWD/cron/cronfile" "$HOME/.cronfile"
+    ln -sf "$PWD/tmux/tmux.conf" "$HOME/.tmux.conf"
+    mkdir -p "$HOME/bin"
+    for f in "$PWD/bin"/*; do
+        ln -sf "$f" "$HOME/bin/$(basename "$f")"
+    done
+}
 
-# create dotfiles_old in homedir
-mkdir -p "$olddir"
+# Remove symlinks
+do_cleanup() {
+    echo "Removing symlinks..."
+    rm -f "$HOME/.bashrc" "$HOME/.bash_aliases" "$HOME/.zshrc" "$HOME/.cronfile" "$HOME/.tmux.conf"
+    rm -rf "$HOME/.config/nvim"
+    for f in "$PWD/bin"/*; do
+        rm -f "$HOME/bin/$(basename "$f")"
+    done
+}
 
-ln -s $(pwd)/scripts $HOME/.scripts
+# Per-distro setup
+setup_ubuntu() {
+    echo "Ubuntu-specific setup..."
+}
+setup_fedora() {
+    echo "Fedora-specific setup..."
+}
+setup_arch() {
+    echo "Arch-specific setup..."
+}
+setup_manjaro() {
+    echo "Manjaro-specific setup..."
+}
 
-# change to the dotfiles directory
-cd $dir
-
-# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
-for file in $files; do
-    mv ~/$file $olddir
-    ln -s $dir/$file ~/$file
-done
-
-source ~/.bashrc
-
-
-mkdir -p ~/.config/nvim
-ln -s ~/.vimrc ~/.config/nvim/init.vim
-
-curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-vim +'PlugInstall --sync' +qa
+# Main
+case "$1" in
+    install)
+        do_symlinks
+        distro=$(get_distro)
+        case "$distro" in
+            ubuntu) setup_ubuntu ;;
+            fedora) setup_fedora ;;
+            arch) setup_arch ;;
+            manjaro) setup_manjaro ;;
+            *) echo "No specific setup for $distro" ;;
+        esac
+        ;;
+    cleanup)
+        do_cleanup
+        ;;
+    *)
+        echo "Usage: $0 {install|cleanup}"
+        exit 1
+        ;;
+esac

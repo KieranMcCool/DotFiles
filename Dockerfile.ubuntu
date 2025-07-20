@@ -1,0 +1,33 @@
+FROM ubuntu:latest
+
+# Install basic utilities
+RUN apt-get update && \
+    apt-get install -y bash zsh neovim cron && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create a user for testing
+RUN useradd -ms /bin/bash testuser
+WORKDIR /home/testuser
+
+# Copy dotfiles repo into container (as root)
+COPY . /home/testuser/dotfiles
+WORKDIR /home/testuser/dotfiles
+
+# Make install.sh executable (as root)
+RUN chmod +x install.sh
+
+# Change ownership to testuser
+RUN chown -R testuser:testuser /home/testuser
+
+# Switch to testuser
+USER testuser
+WORKDIR /home/testuser/dotfiles
+
+# Run install script
+RUN ./install.sh install
+
+# Set up cron using the provided cronfile
+RUN crontab /home/testuser/.cronfile
+
+# Start bash by default
+CMD ["bash"]

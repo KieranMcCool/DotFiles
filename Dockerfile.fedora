@@ -1,0 +1,26 @@
+FROM fedora:latest
+
+# Install basic utilities
+RUN dnf install -y bash zsh neovim cronie && \
+    dnf clean all
+
+# Create a user for testing
+RUN useradd -ms /bin/bash testuser
+USER testuser
+WORKDIR /home/testuser
+
+# Copy dotfiles repo into container
+COPY . /home/testuser/dotfiles
+WORKDIR /home/testuser/dotfiles
+
+# Make install.sh executable
+RUN chmod +x install.sh
+
+# Run install script
+RUN ./install.sh install
+
+# Set up cron using the provided cronfile
+RUN crontab /home/testuser/.cronfile
+
+# Start bash by default
+CMD ["bash"]

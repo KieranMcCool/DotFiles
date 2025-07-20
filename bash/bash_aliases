@@ -1,11 +1,11 @@
 alias x="exit"
 alias vrc="vim ~/.vimrc"
-alias ba="vim ~/.bash_aliases"
+alias ba="vim ~/.bash_aliases && source ~/.bash_aliases"
 alias ff='find . -name $1'
 alias mkcd='mkdir -p $1 && cd $1'
 alias tx="pdflatex"
 alias batt='pmset -g batt'
-alias c='cd ~/Documents/Code'
+alias c='cd ~/Documents/repos'
 alias n='cd ~/Documents/Notes'
 alias d='cd ~/Desktop'
 alias workon='conda activate'
