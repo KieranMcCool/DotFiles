@@ -15,7 +15,7 @@ export BROWSER=/usr/bin/google-chrome-stable
 export GITHUB_USERNAME="KieranMcCool"
 
 # Path
-export CustomScriptsPath="$HOME/.scripts:$HOME/.scripts/private"
+export CustomScriptsPath="$HOME/.scripts:$HOME/.scripts/private:$HOME/.bin"
 export NpmPath="$HOME/.npm/bin"
 export PATH=$PATH:$CustomScriptsPath:$NpmPath
 
