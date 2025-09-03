@@ -99,3 +99,24 @@ require("toggleterm").setup({
 
 -- Lualine configuration
 require('lualine').setup()
+
+-- Auto-open nvim-tree when opening a directory or when no file is provided
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function(data)
+    -- buffer is a directory
+    local directory = vim.fn.isdirectory(data.file) == 1
+    
+    -- no file provided (empty buffer)
+    local no_name = data.file == "" and vim.bo[data.buf].buftype == ""
+
+    if directory then
+      -- change to the directory
+      vim.cmd.cd(data.file)
+      -- open the tree
+      require("nvim-tree.api").tree.open()
+    elseif no_name then
+      -- open the tree in current directory when no file is provided
+      require("nvim-tree.api").tree.open()
+    end
+  end,
+})
