@@ -23,9 +23,9 @@ do_symlinks() {
     ln -sf "$PWD/cron/cronfile" "$HOME/.cronfile"
     crontab "$PWD/cron/cronfile"
     ln -sf "$PWD/tmux/tmux.conf" "$HOME/.tmux.conf"
-    mkdir -p "$HOME/bin"
-    for f in "$PWD/bin"/*; do
-        ln -sf "$f" "$HOME/bin/$(basename "$f")"
+    mkdir -p "$HOME/.bin"
+    for f in "$PWD/.bin"/*; do
+        ln -sf "$f" "$HOME/.bin/$(basename "$f")"
     done
 }
 
@@ -34,8 +34,8 @@ do_cleanup() {
     echo "Removing symlinks..."
     rm -f "$HOME/.bashrc" "$HOME/.bash_aliases" "$HOME/.zshrc" "$HOME/.cronfile" "$HOME/.tmux.conf"
     rm -rf "$HOME/.config/nvim"
-    for f in "$PWD/bin"/*; do
-        rm -f "$HOME/bin/$(basename "$f")"
+    for f in "$PWD/.bin"/*; do
+        rm -f "$HOME/.bin/$(basename "$f")"
     done
 }
 
