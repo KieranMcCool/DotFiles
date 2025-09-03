@@ -1,7 +1,30 @@
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
-map("n", "<C-b>", ":NvimTreeToggle<CR>", opts)
+-- Custom function to always open nvim-tree and focus it
+local function open_nvim_tree()
+  local api = require("nvim-tree.api")
+  if not api.tree.is_visible() then
+    api.tree.open()
+  end
+
+  api.tree.focus()
+end
+
+-- Custom function to close nvim-tree if it's open
+local function close_nvim_tree()
+  local api = require("nvim-tree.api")
+  if api.tree.is_visible() then
+    api.tree.close()
+  end
+end
+
+-- Control + B: Always open nvim-tree and make it active
+map("n", "<C-b>", open_nvim_tree, opts)
+-- Alternative ways to close nvim-tree (more reliable than Ctrl+Shift+B)
+map("n", "<leader>bc", close_nvim_tree, opts) -- Leader + bc (b for tree, c for close)
+map("n", "<C-q>", close_nvim_tree, opts)
+
 map("n", "<C-p>", ":Telescope find_files<CR>", opts)
 map("n", "<C-S-p>", ":Telescope commands<CR>", opts)
 map("n", "<Tab>", ":bnext<CR>", opts)

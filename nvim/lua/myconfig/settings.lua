@@ -72,6 +72,14 @@ require("nvim-tree").setup({
   filters = {
     dotfiles = true,
   },
+  -- Disable default keybinds to avoid conflicts
+  disable_netrw = true,
+  hijack_netrw = true,
+  actions = {
+    open_file = {
+      quit_on_open = false,
+    },
+  },
 })
 
 -- ToggleTerm configuration
