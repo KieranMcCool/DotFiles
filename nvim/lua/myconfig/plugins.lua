@@ -22,4 +22,5 @@ require("lazy").setup({
   "akinsho/bufferline.nvim",
   "nvim-lualine/lualine.nvim",
   "github/copilot.vim",
+  "akinsho/toggleterm.nvim",
 })
