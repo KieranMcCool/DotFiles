@@ -15,11 +15,11 @@ export BROWSER=/usr/bin/google-chrome-stable
 export GITHUB_USERNAME="KieranMcCool"
 
 # Path
-export CustomScriptsPath='~/.scripts:~/.scripts/private'
-export NpmPath='~/.npm/bin'
+export CustomScriptsPath="$HOME/.scripts:$HOME/.scripts/private"
+export NpmPath="$HOME/.npm/bin"
 export PATH=$PATH:$CustomScriptsPath:$NpmPath
 
-npm config set prefix ~/.npm
+npm config set prefix "$HOME/.npm"
 
 [[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
 
