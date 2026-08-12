@@ -18,7 +18,7 @@ fi
 
 # Get the absolute path and output filename
 absolute_path=$(cd "$(dirname "$markdown_file")" && pwd)/$(basename "$markdown_file")
-output_file="${absolute_path%.md}.pdf"
+output_file="${absolute_path%.md}.docx"
 
 # Run pandoc in Docker
 docker run --rm -v "$(dirname "$absolute_path"):/data" \
@@ -27,4 +27,4 @@ docker run --rm -v "$(dirname "$absolute_path"):/data" \
     -o /data/$(basename "$output_file") \
     "$@"
 
-echo "PDF created: $output_file"
+echo "Word doc created: $output_file"

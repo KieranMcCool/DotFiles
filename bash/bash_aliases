@@ -25,5 +25,4 @@ alias x='exit'
 alias xway='env -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE'
 alias fcd='cd $(fzf --walker=dir)'
 
-
 [[ -f ~/.bash_aliases_private ]] && . ~/.bash_aliases_private
