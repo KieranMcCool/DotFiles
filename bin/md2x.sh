@@ -31,7 +31,7 @@ absolute_path=$(cd "$(dirname "$markdown_file")" && pwd)/$(basename "$markdown_f
 output_file="${absolute_path%.md}.$format"
 
 docker run --rm -v "$(dirname "$absolute_path"):/data" \
-    pandoc/latex:latest \
+    pandoc/extra:latest \
     /data/$(basename "$markdown_file") \
     -o /data/$(basename "$output_file") \
     "$@"

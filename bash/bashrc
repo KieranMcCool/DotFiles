@@ -59,7 +59,7 @@ function md2pdf-1in {
 }
 
 function md2pdf-beamer {
-    md2pdf "$1" -t beamer
+    md2pdf "$1" -t beamer -V "theme:metropolis"
 }
 
 [[ -f ~/.bashrc_private ]] && . ~/.bashrc_private
