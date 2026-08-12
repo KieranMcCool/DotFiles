@@ -42,12 +42,24 @@ function docker-bash {
   docker run -it --rm -v ".:/folder" ubuntu /bin/bash
 }
 
+function md2pdf {
+    md2x.sh "$1" pdf "${@:2}"
+}
+
+function md2docx {
+    md2x.sh "$1" docx "${@:2}"
+}
+
+function md2pptx {
+    md2x.sh "$1" pptx "${@:2}"
+}
+
 function md2pdf-1in {
-    md2pdf.sh "$1" -V "geometry:margin=1in"
+    md2pdf "$1" -V "geometry:margin=1in"
 }
 
 function md2pdf-beamer {
-    md2pdf.sh "$1" -t beamer
+    md2pdf "$1" -t beamer
 }
 
 [[ -f ~/.bashrc_private ]] && . ~/.bashrc_private
