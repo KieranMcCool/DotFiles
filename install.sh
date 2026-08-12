@@ -35,6 +35,20 @@ do_symlinks() {
     crontab "$PWD/cron/cronfile"
     ln -sf "$PWD/tmux/tmux.conf" "$HOME/.tmux.conf"
     ensure_owned_dir "$HOME/.bin"
+
+    if [ ! -f "$PWD/bash/.bashrc_private" ]; then
+        echo "Creating private config files..."
+        touch "$PWD/bash/.bashrc_private"
+        ln -sf "$PWD/bash/.bashrc_private" "$HOME/.bashrc_private"
+    fi
+    if [ ! -f "$PWD/bash/.bash_aliases_private" ]; then
+        touch "$PWD/bash/.bash_aliases_private"
+        ln -sf "$PWD/bash/.bash_aliases_private" "$HOME/.bash_aliases_private"
+    fi
+    if [ ! -f "$PWD/zsh/.zshrc_private" ]; then
+        touch "$PWD/zsh/.zshrc_private"
+        ln -sf "$PWD/zsh/.zshrc_private" "$HOME/.zshrc_private"
+    fi
     for f in "$PWD/bin"/*; do
         ln -sf "$f" "$HOME/.bin/$(basename "$f")"
     done
@@ -48,6 +62,8 @@ do_cleanup() {
     echo "Removing symlinks..."
     rm -f "$HOME/.bashrc" "$HOME/.bash_aliases" "$HOME/.zshrc" "$HOME/.cronfile" "$HOME/.tmux.conf"
     rm -rf "$HOME/.config/nvim"
+    rm -f "$HOME/.bashrc_private" "$HOME/.bash_aliases_private" "$HOME/.zshrc_private"
+    
     for f in "$PWD/bin"/*; do
         rm -f "$HOME/.bin/$(basename "$f")"
     done
@@ -58,12 +74,15 @@ do_cleanup() {
 setup_ubuntu() {
     echo "Ubuntu-specific setup..."
 }
+
 setup_fedora() {
     echo "Fedora-specific setup..."
 }
+
 setup_arch() {
     echo "Arch-specific setup..."
 }
+
 setup_manjaro() {
     echo "Manjaro-specific setup..."
 }
