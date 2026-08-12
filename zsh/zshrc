@@ -15,3 +15,5 @@ fi
 
 source ~/.bashrc
 source ~/.bash_aliases
+
+[[ -f ~/.zshrc_private ]] && source ~/.zshrc_private

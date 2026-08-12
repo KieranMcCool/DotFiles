@@ -1,11 +1,16 @@
 FROM fedora:latest
 
 # Install basic utilities
-RUN dnf install -y bash zsh neovim cronie && \
+RUN dnf install -y bash zsh neovim cronie git sudo && \
     dnf clean all
 
 # Create a user for testing
 RUN useradd -ms /bin/bash testuser
+
+# Allow testuser to use the package manager only
+RUN echo 'testuser ALL=(ALL) NOPASSWD: /usr/bin/dnf' > /etc/sudoers.d/testuser && \
+    chmod 440 /etc/sudoers.d/testuser
+
 USER testuser
 WORKDIR /home/testuser
 
@@ -13,14 +18,13 @@ WORKDIR /home/testuser
 COPY . /home/testuser/dotfiles
 WORKDIR /home/testuser/dotfiles
 
-# Make install.sh executable
-RUN chmod +x install.sh
-
 # Run install script
 RUN ./install.sh install
 
 # Set up cron using the provided cronfile
 RUN crontab /home/testuser/.cronfile
+
+RUN nvim --headless "+Lazy! sync" +qa
 
 # Start bash by default
 CMD ["bash"]

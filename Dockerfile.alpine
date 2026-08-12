@@ -40,9 +40,12 @@ RUN sed 's/crontab.*cronfile/# &/' install.sh > install_no_cron.sh && \
     chmod +x install_no_cron.sh && \
     ./install_no_cron.sh install
 
-# Switch back to root to set up cron
+# Switch back to root to set up cron and sudo
 USER root
-RUN crontab -u testuser /home/testuser/dotfiles/cron/cronfile
+RUN crontab -u testuser /home/testuser/dotfiles/cron/cronfile && \
+    apk add --no-cache sudo && \
+    echo 'testuser ALL=(ALL) NOPASSWD: /sbin/apk' > /etc/sudoers.d/testuser && \
+    chmod 440 /etc/sudoers.d/testuser
 
 # Switch back to testuser  
 USER testuser

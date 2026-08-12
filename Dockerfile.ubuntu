@@ -7,11 +7,15 @@ RUN apt-get update && \
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb && \
     apt-get update && \
-    apt-get install -y bash zsh neovim cron git curl nodejs npm libicu-dev dotnet-sdk-8.0 aspnetcore-runtime-8.0 && \
+    apt-get install -y bash zsh neovim cron git curl nodejs npm libicu-dev dotnet-sdk-8.0 aspnetcore-runtime-8.0 sudo && \
     rm -rf /var/lib/apt/lists/*
 
 # Create a user for testing
 RUN useradd -ms /bin/bash testuser
+
+# Allow testuser to use the package manager only
+RUN echo 'testuser ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt' > /etc/sudoers.d/testuser && \
+    chmod 440 /etc/sudoers.d/testuser
 WORKDIR /home/testuser
 
 # Copy dotfiles repo into container (as root)

@@ -1,44 +1,32 @@
-alias x="exit"
-alias vrc="vim ~/.vimrc"
-alias ba="vim ~/.bash_aliases && source ~/.bash_aliases"
-alias ff='find . -name $1'
-alias mkcd='mkdir -p $1 && cd $1'
-alias tx="pdflatex"
+alias ba='vim ~/.bash_aliases && source ~/.bash_aliases'
 alias batt='pmset -g batt'
 alias c='cd ~/Documents/repos'
-alias n='cd ~/Documents/Notes'
 alias d='cd ~/Desktop'
-alias workon='conda activate'
-alias deactivate='conda deactivate'
-alias vim='nvim'
-alias kaexe='killall -r .*.exe'
-alias update="sudo pacman -Syu && yay -Syu"
-alias ngs='ng serve -o'
-alias grep="grep --color=auto"
-alias fgrep="fgrep --color=auto"
-alias egrep="egrep --color=auto"
-
-# Docker Aliases
+alias docker-clean='docker container prune && docker volume prune --all && docker image prune --all'
 alias dps='docker ps'
 alias dpsa='docker ps -a'
-alias di='docker images'
 alias dr='docker run'
-alias db='docker build'
-alias dex='docker exec -it'
 alias drm='docker rm'
+alias egrep='egrep --color=auto'
+alias ff='find . -name $1'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias kaexe='killall -r .*.exe'
+alias kieranmc.cool='ssh ubuntu@kieranmc.cool -p 33222'
+alias mkcd='mkdir -p $1 && cd $1'
+alias n='cd ~/Documents/Notes'
+alias newapp='new_app_path=e0c9a030-fb03-4e35-b9bf-dd28460227a2 && cp -r ~/Templates/NewApp ./ebf07d66-aad2-4be2-b900-756dcc7ab0ad && cd ebf07d66-aad2-4be2-b900-756dcc7ab0ad && chmod +x ./setup-project.sh  && ./setup-project.sh'
+alias ngs='ng serve -o'
+alias tx='pdflatex'
+alias update='sudo pacman -Syu && yay -Syu'
+alias vim='nvim'
+alias vrc='vim ~/.vimrc'
+alias workon='conda activate'
+alias x='exit'
+alias xway='env -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE'
+alias fcd='cd $(fzf --walker=dir)'
 
-# Docker Compose Aliases
-alias dcu='docker-compose up'
-alias dcd='docker-compose down'
-alias dcl='docker-compose logs'
-alias dcb='docker-compose build'
-alias dcdv='docker-compose down -v'
-alias dcwatch='docker compose up --watch'
+alias devbox='ssh vpsuser@dev.kieranmc.cool'
+alias devbox-root='ssh ubuntu@dev.kieranmc.cool'
 
-function gh {
-    git clone "https://github.com/$1/$2"
-}
-
-function ghme {
-    gh "$GITHUB_USERNAME" "$1"
-}
+[[ -f ~/.bash_aliases_private ]] && . ~/.bash_aliases_private

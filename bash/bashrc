@@ -23,6 +23,23 @@ npm config set prefix "$HOME/.npm"
 
 [[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
 
+
 if command -v pandoc &> /dev/null; then
     eval "$(pandoc --bash-completion)"
 fi
+
+export PATH="$HOME/.local/bin:$PATH"
+
+function gh {
+    git clone "git@github.com:$1/$2.git"
+}
+
+function ghme {
+    gh "$GITHUB_USERNAME" "$1"
+}
+
+function docker-bash {
+  docker run -it --rm -v ".:/folder" ubuntu /bin/bash
+}
+
+[[ -f ~/.bashrc_private ]] && . ~/.bashrc_private

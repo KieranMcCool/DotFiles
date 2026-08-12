@@ -2,10 +2,15 @@ FROM manjaro:latest
 
 # Install basic utilities
 RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm bash zsh neovim cronie
+    pacman -S --noconfirm bash zsh neovim cronie git sudo
 
 # Create a user for testing
 RUN useradd -ms /bin/bash testuser
+
+# Allow testuser to use the package manager only
+RUN echo 'testuser ALL=(ALL) NOPASSWD: /usr/bin/pacman' > /etc/sudoers.d/testuser && \
+    chmod 440 /etc/sudoers.d/testuser
+
 USER testuser
 WORKDIR /home/testuser
 
@@ -21,6 +26,8 @@ RUN ./install.sh install
 
 # Set up cron using the provided cronfile
 RUN crontab /home/testuser/.cronfile
+
+RUN nvim --headless "+Lazy! sync" +qa
 
 # Start bash by default
 CMD ["bash"]

@@ -1,2 +1,2 @@
 # Log the current time every minute
-* * * * * date >> "$HOME/times.txt"
+#* * * * * date >> "$HOME/times.txt"
