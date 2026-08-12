@@ -1,8 +1,8 @@
-FROM manjaro:latest
+FROM manjarolinux/base:latest
 
 # Install basic utilities
 RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm bash zsh neovim cronie git sudo
+    pacman -S --noconfirm bash zsh neovim cronie git sudo curl nodejs npm
 
 # Create a user for testing
 RUN useradd -ms /bin/bash testuser
@@ -11,15 +11,15 @@ RUN useradd -ms /bin/bash testuser
 RUN echo 'testuser ALL=(ALL) NOPASSWD: /usr/bin/pacman' > /etc/sudoers.d/testuser && \
     chmod 440 /etc/sudoers.d/testuser
 
-USER testuser
+# Copy dotfiles repo into container and fix ownership (must be done as root)
 WORKDIR /home/testuser
-
-# Copy dotfiles repo into container
 COPY . /home/testuser/dotfiles
 WORKDIR /home/testuser/dotfiles
+RUN chmod +x install.sh && \
+    chown -R testuser:testuser /home/testuser
 
-# Make install.sh executable
-RUN chmod +x install.sh
+USER testuser
+WORKDIR /home/testuser/dotfiles
 
 # Run install script
 RUN ./install.sh install

@@ -7,9 +7,6 @@ RUN apk add --no-cache neovim git curl nodejs npm icu-libs bash dcron
 ENV NPM_CONFIG_PREFIX=/root/.npm-global
 ENV PATH="/root/.npm-global/bin:/usr/local/bin:$PATH"
 
-# COPY CONFIGURATION FILES
-COPY . /root/.config/nvim/
-
 # Create a user for testing
 RUN adduser -D -s /bin/bash testuser
 WORKDIR /home/testuser
