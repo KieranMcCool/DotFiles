@@ -12,7 +12,6 @@ alias ff='find . -name $1'
 alias fgrep='fgrep --color=auto'
 alias grep='grep --color=auto'
 alias kaexe='killall -r .*.exe'
-alias kieranmc.cool='ssh ubuntu@kieranmc.cool -p 33222'
 alias mkcd='mkdir -p $1 && cd $1'
 alias n='cd ~/Documents/Notes'
 alias newapp='new_app_path=e0c9a030-fb03-4e35-b9bf-dd28460227a2 && cp -r ~/Templates/NewApp ./ebf07d66-aad2-4be2-b900-756dcc7ab0ad && cd ebf07d66-aad2-4be2-b900-756dcc7ab0ad && chmod +x ./setup-project.sh  && ./setup-project.sh'
@@ -26,7 +25,5 @@ alias x='exit'
 alias xway='env -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE'
 alias fcd='cd $(fzf --walker=dir)'
 
-alias devbox='ssh vpsuser@dev.kieranmc.cool'
-alias devbox-root='ssh ubuntu@dev.kieranmc.cool'
 
 [[ -f ~/.bash_aliases_private ]] && . ~/.bash_aliases_private
