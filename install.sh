@@ -53,8 +53,26 @@ do_symlinks() {
         ln -sf "$f" "$HOME/.bin/$(basename "$f")"
     done
     ensure_owned_dir "$HOME/.claude"
-    ln -sf "$PWD/claude/skills" "$HOME/.claude/skills"
-    ln -sf "$PWD/claude/agents" "$HOME/.claude/agents"
+    ensure_owned_dir "$HOME/.claude/skills"
+    ensure_owned_dir "$HOME/.claude/agents"
+    for f in "$HOME/.claude/skills"/*; do
+        [ -L "$f" ] || continue
+        [[ "$(readlink "$f")" == "$PWD/claude/skills/"* ]] && [ ! -e "$f" ] && rm "$f"
+    done
+    for f in "$HOME/.claude/agents"/*; do
+        [ -L "$f" ] || continue
+        [[ "$(readlink "$f")" == "$PWD/claude/agents/"* ]] && [ ! -e "$f" ] && rm "$f"
+    done
+    for f in "$PWD/claude/skills"/*; do
+        [ -e "$f" ] || continue
+        [ "$(basename "$f")" = ".gitkeep" ] && continue
+        ln -sf "$f" "$HOME/.claude/skills/$(basename "$f")"
+    done
+    for f in "$PWD/claude/agents"/*; do
+        [ -e "$f" ] || continue
+        [ "$(basename "$f")" = ".gitkeep" ] && continue
+        ln -sf "$f" "$HOME/.claude/agents/$(basename "$f")"
+    done
 }
 
 # Remove symlinks
@@ -67,7 +85,14 @@ do_cleanup() {
     for f in "$PWD/bin"/*; do
         rm -f "$HOME/.bin/$(basename "$f")"
     done
-    rm -rf "$HOME/.claude/skills" "$HOME/.claude/agents"
+    for f in "$HOME/.claude/skills"/*; do
+        [ -L "$f" ] || continue
+        [[ "$(readlink "$f")" == "$PWD/claude/skills/"* ]] && rm "$f"
+    done
+    for f in "$HOME/.claude/agents"/*; do
+        [ -L "$f" ] || continue
+        [[ "$(readlink "$f")" == "$PWD/claude/agents/"* ]] && rm "$f"
+    done
 }
 
 # Per-distro setup
