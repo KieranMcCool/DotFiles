@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Fetch a BibTeX entry for a book by its ISBN."""
+
+import sys
+import json
+import re
+import urllib.request
+
+
+def clean_isbn(raw):
+    raw = raw.strip()
+    if raw.lower().startswith('isbn:'):
+        raw = raw[5:]
+    return re.sub(r'[-\s]', '', raw)
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('Usage: isbn2bib <isbn>', file=sys.stderr)
+        print('  e.g. isbn2bib 978-0-06-196508-1', file=sys.stderr)
+        sys.exit(1)
+
+    isbn = clean_isbn(sys.argv[1])
+    url = (f'https://openlibrary.org/api/books'
+           f'?bibkeys=ISBN:{isbn}&format=json&jscmd=data')
+
+    with urllib.request.urlopen(url) as resp:
+        data = json.loads(resp.read())
+
+    if not data:
+        print(f'Error: ISBN not found: {isbn}', file=sys.stderr)
+        sys.exit(1)
+
+    book = data[list(data.keys())[0]]
+    title = book.get('title', 'Unknown Title')
+    authors = book.get('authors', [])
+    author_str = ' and '.join(a.get('name', '') for a in authors)
+    publish_date = book.get('publish_date', '')
+    m = re.search(r'\d{4}', publish_date)
+    year = m.group(0) if m else '????'
+    publishers = book.get('publishers', [])
+    publisher = publishers[0].get('name', '') if publishers else ''
+    isbn_ids = book.get('identifiers', {})
+    isbn_out = (isbn_ids.get('isbn_13') or isbn_ids.get('isbn_10') or [''])[0]
+    book_url = book.get('url', '')
+
+    last_name = authors[0].get('name', 'Unknown').split()[-1] if authors else 'Unknown'
+    cite_key = f'{last_name}{year}'
+
+    print(f'@book{{{cite_key},')
+    print(f'  title = {{{title}}},')
+    if author_str:
+        print(f'  author = {{{author_str}}},')
+    print(f'  year = {{{year}}},')
+    if publisher:
+        print(f'  publisher = {{{publisher}}},')
+    if isbn_out:
+        print(f'  isbn = {{{isbn_out}}},')
+    if book_url:
+        print(f'  url = {{{book_url}}},')
+    print('}')
+
+
+if __name__ == '__main__':
+    main()

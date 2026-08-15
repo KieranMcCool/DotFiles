@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+"""Fetch a BibTeX entry for an arXiv paper by its ID."""
+
+import sys
+import re
+import urllib.request
+import xml.etree.ElementTree as ET
+
+NS = {
+    'atom': 'http://www.w3.org/2005/Atom',
+    'arxiv': 'http://arxiv.org/schemas/atom',
+}
+MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
+def clean_id(raw):
+    raw = raw.strip()
+    for prefix in ('arxiv:', 'https://arxiv.org/abs/', 'http://arxiv.org/abs/'):
+        if raw.lower().startswith(prefix.lower()):
+            raw = raw[len(prefix):]
+    return re.sub(r'v\d+$', '', raw)
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('Usage: arxiv2bib <arxiv-id>', file=sys.stderr)
+        print('  e.g. arxiv2bib 2301.12345', file=sys.stderr)
+        sys.exit(1)
+
+    arxiv_id = clean_id(sys.argv[1])
+    url = f'http://export.arxiv.org/api/query?id_list={arxiv_id}'
+
+    with urllib.request.urlopen(url) as resp:
+        root = ET.fromstring(resp.read())
+
+    entry = root.find('atom:entry', NS)
+    if entry is None:
+        print(f'Error: no results for arXiv ID: {arxiv_id}', file=sys.stderr)
+        sys.exit(1)
+
+    title = re.sub(r'\s+', ' ', entry.find('atom:title', NS).text.strip())
+    authors = [a.find('atom:name', NS).text for a in entry.findall('atom:author', NS)]
+    published = entry.find('atom:published', NS).text
+    year = published[:4]
+    month = MONTHS[int(published[5:7]) - 1]
+
+    doi_el = entry.find('arxiv:doi', NS)
+    doi = doi_el.text.strip() if doi_el is not None else None
+    jref_el = entry.find('arxiv:journal_ref', NS)
+    journal_ref = jref_el.text.strip() if jref_el is not None else None
+
+    raw_id = entry.find('atom:id', NS).text.strip().split('abs/')[-1]
+    clean_arxiv = re.sub(r'v\d+$', '', raw_id)
+
+    last_name = authors[0].split()[-1] if authors else 'Unknown'
+    cite_key = f'{last_name}{year}'
+    author_str = ' and '.join(authors)
+
+    entry_type = '@article' if (doi or journal_ref) else '@misc'
+    print(f'{entry_type}{{{cite_key},')
+    print(f'  title = {{{title}}},')
+    print(f'  author = {{{author_str}}},')
+    print(f'  year = {{{year}}},')
+    print(f'  month = {month},')
+    if journal_ref:
+        print(f'  journal = {{{journal_ref}}},')
+    if doi:
+        print(f'  doi = {{{doi}}},')
+    print(f'  eprint = {{{clean_arxiv}}},')
+    print(f'  archivePrefix = {{arXiv}},')
+    print(f'  url = {{https://arxiv.org/abs/{clean_arxiv}}},')
+    print('}')
+
+
+if __name__ == '__main__':
+    main()

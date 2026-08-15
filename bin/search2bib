@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Search CrossRef for papers and output the chosen entry as BibTeX."""
+
+import sys
+import json
+import urllib.request
+import urllib.parse
+
+
+def fetch_bibtex(doi):
+    req = urllib.request.Request(
+        f'https://doi.org/{doi}',
+        headers={'Accept': 'application/x-bibtex'},
+    )
+    with urllib.request.urlopen(req) as resp:
+        return resp.read().decode('utf-8', errors='replace')
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('Usage: search2bib <query>', file=sys.stderr)
+        print('  e.g. search2bib "health effects climate change"', file=sys.stderr)
+        sys.exit(1)
+
+    query = ' '.join(sys.argv[1:])
+    encoded = urllib.parse.quote(query)
+    url = (f'https://api.crossref.org/works?query={encoded}&rows=10'
+           f'&select=DOI,title,author,published,container-title,type')
+
+    with urllib.request.urlopen(url) as resp:
+        items = json.loads(resp.read()).get('message', {}).get('items', [])
+
+    if not items:
+        print('No results found.', file=sys.stderr)
+        sys.exit(1)
+
+    print(f'\nResults for: {query}\n', file=sys.stderr)
+    for i, item in enumerate(items, 1):
+        title = (item.get('title') or ['Unknown'])[0]
+        authors = item.get('author', [])
+        if authors:
+            first = authors[0]
+            last = first.get('family') or first.get('name', '?')
+            author_str = last + (' et al.' if len(authors) > 1 else '')
+        else:
+            author_str = 'Unknown'
+        pub = item.get('published', {}).get('date-parts', [[None]])[0]
+        year = str(pub[0]) if pub and pub[0] else '?'
+        journal = (item.get('container-title') or [''])[0]
+        doi = item.get('DOI', '')
+        print(f'  [{i}] {author_str} ({year}). {title[:70]}', file=sys.stderr)
+        if journal:
+            print(f'       {journal}', file=sys.stderr)
+        print(f'       DOI: {doi}', file=sys.stderr)
+        print(file=sys.stderr)
+
+    # Read selection from /dev/tty so stdout can be redirected to a file
+    try:
+        sys.stderr.write(f'Select [1-{len(items)}] (or q to quit): ')
+        sys.stderr.flush()
+        with open('/dev/tty') as tty:
+            choice = tty.readline().strip()
+    except OSError:
+        print('Error: cannot read from terminal', file=sys.stderr)
+        sys.exit(1)
+
+    if choice.lower() == 'q':
+        sys.exit(0)
+
+    try:
+        idx = int(choice) - 1
+        if not 0 <= idx < len(items):
+            raise ValueError
+    except ValueError:
+        print('Invalid selection.', file=sys.stderr)
+        sys.exit(1)
+
+    doi = items[idx].get('DOI', '')
+    if not doi:
+        print('Error: selected item has no DOI.', file=sys.stderr)
+        sys.exit(1)
+
+    bib = fetch_bibtex(doi)
+    print(bib.strip())
+    print()
+
+
+if __name__ == '__main__':
+    main()

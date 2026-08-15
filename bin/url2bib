@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""Generate a BibTeX @misc entry for a webpage URL."""
+
+import sys
+import re
+import http.cookiejar
+import urllib.request
+from html.parser import HTMLParser
+from datetime import date
+
+
+class MetaExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.meta = {}
+        self.title = None
+        self._in_title = False
+
+    def handle_starttag(self, tag, attrs):
+        attrs_dict = dict(attrs)
+        if tag == 'meta':
+            name = (attrs_dict.get('name') or attrs_dict.get('property') or '').lower()
+            content = attrs_dict.get('content', '')
+            if name and content:
+                self.meta[name] = content
+        elif tag == 'title':
+            self._in_title = True
+
+    def handle_data(self, data):
+        if self._in_title and self.title is None:
+            self.title = data.strip()
+
+    def handle_endtag(self, tag):
+        if tag == 'title':
+            self._in_title = False
+
+
+def main():
+    if len(sys.argv) < 2:
+        print('Usage: url2bib <url>', file=sys.stderr)
+        print('  e.g. url2bib https://example.com/article', file=sys.stderr)
+        sys.exit(1)
+
+    url = sys.argv[1]
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    cj = http.cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    with opener.open(req, timeout=30) as resp:
+        html = resp.read().decode('utf-8', errors='replace')
+
+    parser = MetaExtractor()
+    parser.feed(html)
+
+    title = (parser.meta.get('og:title') or
+             parser.meta.get('twitter:title') or
+             parser.title or 'Unknown Title').strip()
+
+    author = (parser.meta.get('author') or
+              parser.meta.get('article:author') or
+              parser.meta.get('og:article:author') or '')
+
+    pub_date = (parser.meta.get('article:published_time') or
+                parser.meta.get('date') or
+                parser.meta.get('pubdate') or '')
+    year = ''
+    if pub_date:
+        m = re.search(r'(\d{4})', pub_date)
+        if m:
+            year = m.group(1)
+
+    site = (parser.meta.get('og:site_name') or
+            re.sub(r'^https?://(www\.)?', '', url).split('/')[0])
+
+    cite_key = re.sub(r'[^a-zA-Z0-9]', '', site) + year
+    today = date.today().strftime('%Y-%m-%d')
+
+    print(f'@misc{{{cite_key},')
+    print(f'  title = {{{{{title}}}}},')
+    if author:
+        print(f'  author = {{{author}}},')
+    if year:
+        print(f'  year = {{{year}}},')
+    print(f'  howpublished = {{\\url{{{url}}}}},')
+    print(f'  note = {{Accessed: {today}}},')
+    print('}')
+
+
+if __name__ == '__main__':
+    main()
