@@ -29,11 +29,18 @@ esac
 
 absolute_path=$(cd "$(dirname "$markdown_file")" && pwd)/$(basename "$markdown_file")
 output_file="${absolute_path%.md}.$format"
+bib_file="${absolute_path%.md}.bib"
+
+bib_arg=""
+if [ -f "$bib_file" ]; then
+    bib_arg="--citeproc --bibliography=/data/$(basename "$bib_file")"
+fi
 
 docker run --rm -v "$(dirname "$absolute_path"):/data" \
     pandoc/extra:latest \
     /data/$(basename "$markdown_file") \
     -o /data/$(basename "$output_file") \
+    $bib_arg \
     "$@"
 
 echo "${format^^} created: $output_file"
