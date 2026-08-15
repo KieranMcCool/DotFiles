@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: doi2bib <doi>" >&2
+  echo "  e.g. doi2bib \"doi:10.1001/jama.291.1.99\"" >&2
+  exit 1
+fi
+
+# Strip optional "doi:" or "https://doi.org/" prefix
+doi="${1#doi:}"
+doi="${doi#https://doi.org/}"
+doi="${doi#http://doi.org/}"
+
+curl --silent --show-error --fail --location \
+  --header "Accept: application/x-bibtex" \
+  "https://doi.org/${doi}"
+
+# Ensure output ends with a newline
+echo
+
